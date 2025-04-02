@@ -15,14 +15,14 @@ export default function HeroSectionOne() {
   // State to track which line is active for the cursor
   const [activeLine, setActiveLine] = useState(1)
   
-  // Use a ref to track if the animations have been played
-  const animationPlayedRef = useRef(false)
-  const sectionRef = useRef(null)
+  // State to track if animations should be enabled (only first time)
+  const [animationEnabled, setAnimationEnabled] = useState(true)
+  const firstRenderRef = useRef(true)
 
   useEffect(() => {
-    // Only run animation if it hasn't played yet
-    if (!animationPlayedRef.current) {
-      animationPlayedRef.current = true;
+    // Only run animation on first render
+    if (firstRenderRef.current) {
+      firstRenderRef.current = false;
       
       // Start with first line
       setActiveLine(1)
@@ -32,15 +32,20 @@ export default function HeroSectionOne() {
         setActiveLine(2)
       }, 3000)
       
-      return () => clearTimeout(timer)
+      // After all animations complete, disable future animations
+      const disableTimer = setTimeout(() => {
+        setAnimationEnabled(false)
+      }, 5000)
+      
+      return () => {
+        clearTimeout(timer)
+        clearTimeout(disableTimer)
+      }
     }
   }, [])
 
   return (
-    <div 
-      className="relative mx-auto my-10 flex max-w-7xl flex-col items-center justify-center"
-      ref={sectionRef}
-    >
+    <div className="relative mx-auto my-10 flex max-w-7xl flex-col items-center justify-center">
       <Navbar />
       <div className="absolute inset-y-0 left-0 h-full w-px bg-neutral-200/80 dark:bg-neutral-800/80">
         <div className="absolute top-0 h-40 w-px bg-gradient-to-b from-transparent via-blue-500 to-transparent" />
@@ -57,12 +62,20 @@ export default function HeroSectionOne() {
           <div className="flex flex-col items-center relative">
             {/* First line */}
             <div className="flex items-center">
-              <TypewriterEffectSmooth
-                words={wordsLine1}
-                className="text-3xl font-bold text-slate-700 md:text-5xl lg:text-7xl dark:text-slate-300 mb-0 pb-0"
-                cursorClassName="hidden" // Hide the individual cursor
-                startDelay={0.5}
-              />
+              {animationEnabled ? (
+                <TypewriterEffectSmooth
+                  words={wordsLine1}
+                  className="text-3xl font-bold text-slate-700 md:text-5xl lg:text-7xl dark:text-slate-300 mb-0 pb-0"
+                  cursorClassName="hidden" // Hide the individual cursor
+                  startDelay={0.5}
+                />
+              ) : (
+                <div className="text-3xl font-bold text-slate-700 md:text-5xl lg:text-7xl dark:text-slate-300 mb-0 pb-0">
+                  {wordsLine1.map((word, i) => (
+                    <span key={i}>{word.text} </span>
+                  ))}
+                </div>
+              )}
               
               {/* Shared cursor for line 1 */}
               {activeLine === 1 && (
@@ -81,12 +94,20 @@ export default function HeroSectionOne() {
             
             {/* Second line */}
             <div className="flex items-center">
-              <TypewriterEffectSmooth
-                words={wordsLine2}
-                className="text-3xl font-bold text-slate-700 md:text-5xl lg:text-7xl dark:text-slate-300 mt-0 pt-0"
-                cursorClassName="hidden" // Hide the individual cursor
-                startDelay={3.5} // Start after first line completes
-              />
+              {animationEnabled ? (
+                <TypewriterEffectSmooth
+                  words={wordsLine2}
+                  className="text-3xl font-bold text-slate-700 md:text-5xl lg:text-7xl dark:text-slate-300 mt-0 pt-0"
+                  cursorClassName="hidden" // Hide the individual cursor
+                  startDelay={3.5} // Start after first line completes
+                />
+              ) : (
+                <div className="text-3xl font-bold text-slate-700 md:text-5xl lg:text-7xl dark:text-slate-300 mt-0 pt-0">
+                  {wordsLine2.map((word, i) => (
+                    <span key={i}>{word.text} </span>
+                  ))}
+                </div>
+              )}
               
               {/* Shared cursor for line 2 */}
               {activeLine === 2 && (

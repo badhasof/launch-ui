@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
         hostname: 'assets.aceternity.com',
         pathname: '**',
       },
+      {
+        protocol: 'https',
+        hostname: 'i.imgur.com',
+        pathname: '**',
+      },
     ],
   },
 };

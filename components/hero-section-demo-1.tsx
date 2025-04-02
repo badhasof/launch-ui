@@ -1,9 +1,9 @@
 "use client"
 
-import Image from "next/image"
 import { motion } from "motion/react"
 import { TypewriterEffectSmooth } from "@/components/ui/typewriter-effect"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
+import Image from "next/image"
 
 export default function HeroSectionOne() {
   // Define the words for the first line of the typewriter effect
@@ -14,21 +14,33 @@ export default function HeroSectionOne() {
   
   // State to track which line is active for the cursor
   const [activeLine, setActiveLine] = useState(1)
+  
+  // Use a ref to track if the animations have been played
+  const animationPlayedRef = useRef(false)
+  const sectionRef = useRef(null)
 
   useEffect(() => {
-    // Start with first line
-    setActiveLine(1)
-    
-    // After first line is done (around 3 seconds), switch to second line
-    const timer = setTimeout(() => {
-      setActiveLine(2)
-    }, 3000)
-    
-    return () => clearTimeout(timer)
+    // Only run animation if it hasn't played yet
+    if (!animationPlayedRef.current) {
+      animationPlayedRef.current = true;
+      
+      // Start with first line
+      setActiveLine(1)
+      
+      // After first line is done (around 3 seconds), switch to second line
+      const timer = setTimeout(() => {
+        setActiveLine(2)
+      }, 3000)
+      
+      return () => clearTimeout(timer)
+    }
   }, [])
 
   return (
-    <div className="relative mx-auto my-10 flex max-w-7xl flex-col items-center justify-center">
+    <div 
+      className="relative mx-auto my-10 flex max-w-7xl flex-col items-center justify-center"
+      ref={sectionRef}
+    >
       <Navbar />
       <div className="absolute inset-y-0 left-0 h-full w-px bg-neutral-200/80 dark:bg-neutral-800/80">
         <div className="absolute top-0 h-40 w-px bg-gradient-to-b from-transparent via-blue-500 to-transparent" />
@@ -109,6 +121,7 @@ export default function HeroSectionOne() {
           With AI, you can launch your website in hours, not days. Try our best in class, state of the art, cutting edge
           AI tools to get your website up.
         </motion.p>
+        
         <motion.div
           initial={{
             opacity: 0,
@@ -129,6 +142,7 @@ export default function HeroSectionOne() {
             Contact Support
           </button>
         </motion.div>
+        
         <motion.div
           initial={{
             opacity: 0,
@@ -146,11 +160,12 @@ export default function HeroSectionOne() {
         >
           <div className="w-full overflow-hidden rounded-xl border border-gray-300 dark:border-gray-700">
             <Image
-              src="https://assets.aceternity.com/pro/aceternity-landing.webp"
-              alt="Landing page preview"
-              className="aspect-[16/9] h-auto w-full object-cover"
-              height={1000}
-              width={1000}
+              src="/resume.png"
+              alt="Resume template preview"
+              className="aspect-[16/9] h-auto w-full object-contain"
+              width={1200}
+              height={800}
+              unoptimized
             />
           </div>
         </motion.div>
